@@ -1,0 +1,40 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-processor
+  template:
+    metadata:
+      labels:
+        app: order-processor
+      annotations:
+        dapr.io/app-id: "order-processor"
+        dapr.io/enabled: "true"
+        dapr.io/app-port: "5001"
+        dapr.io/metrics-port: "9090"
+        dapr.io/log-as-json: "true"
+    spec:
+      containers:
+      - name: order-processor
+        image: <your-docker-image>
+        ports:
+        - containerPort: 80
+
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-processor-service
+spec:
+  selector:
+    app: order-processor
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
