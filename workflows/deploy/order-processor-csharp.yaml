@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-processor-app
+  labels:
+    app: order-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-processor
+  template:
+    metadata:
+      labels:
+        app: order-processor
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "order-processor"
+        dapr.io/app-port: "80"
+        dapr.io/log-as-json: "true"
+        dapr.io/config: "appconfig"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: order-processor-csharp
+        image: docker.io/library/order-processor:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Never
